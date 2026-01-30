@@ -15,7 +15,9 @@ from structured_files.middleware.trigger_js import trigger_express_api
 
 app=FastAPI()
 
-
+@app.get("/")
+def serverRunning():
+    return {"message": "V Predict Backend is running"}
 
 # =========================
 # Authentication
@@ -85,11 +87,3 @@ app.add_middleware(
 
 
 
-#trigger for some emails without data 
-
-class ApiLink(BaseModel):
-    url:str
-
-@app.post("/trigger")
-def trigger_Route(payload:ApiLink):
-    trigger_express_api(payload.url)
