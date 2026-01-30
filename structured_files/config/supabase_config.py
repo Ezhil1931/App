@@ -1,0 +1,13 @@
+
+from supabase import create_client, Client
+
+api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3Y21hdXFuZmt6c25icmxid3pmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzQ3OTcsImV4cCI6MjA3NTMxMDc5N30.7ctmxqL9xQ6pTKSUOu2NFSUHZ4JD9VnVyzPdFH3f0c0"
+
+api_key_bypass="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3Y21hdXFuZmt6c25icmxid3pmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTczNDc5NywiZXhwIjoyMDc1MzEwNzk3fQ.cxHeQ8sWsXBO9UnlhKto6kSfViBgHwqNJoXMe8dGqYc"
+
+
+SUPABASE_URL="https://rwcmauqnfkzsnbrlbwzf.supabase.co"
+
+     
+
+supabase:Client = create_client(SUPABASE_URL,api_key_bypass)

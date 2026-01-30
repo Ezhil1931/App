@@ -1,0 +1,101 @@
+from fastapi import APIRouter, HTTPException, status
+from pydantic import BaseModel, EmailStr
+from argon2 import PasswordHasher
+from datetime import datetime, timedelta
+import uuid, random
+
+from ..config.supabase_config import supabase
+from ..utils.email_sender import send_otp_email
+from ..utils.refer_id_gen import generate_referral_id
+
+router = APIRouter()
+ph = PasswordHasher()
+
+
+
+
+class SignUpRequest(BaseModel):
+    user_email: EmailStr
+  
+    password: str
+
+
+
+
+
+#generate the otp-------------
+
+
+
+def generate_otp():
+    return random.randint(100000, 999999)
+
+def generate_unique_username():
+    MAX_ATTEMPTS = 10
+
+    for _ in range(MAX_ATTEMPTS):
+        username = f"user_{random.randint(100000, 999999)}"
+        exists = (
+            supabase.table("users")
+            .select("user_id")
+            .ilike("user_name", username)
+            .execute()
+            .data
+        )
+        if not exists:
+            return username
+
+    # fallback – guaranteed unique
+    return f"user_{uuid.uuid4().hex[:8]}"
+
+
+
+
+@router.post("/signup", status_code=status.HTTP_201_CREATED)
+async def sign_up(user: SignUpRequest):
+
+    # 1️⃣ Check email
+    if supabase.table("users").select("user_id").eq("user_email", user.user_email).execute().data:
+        raise HTTPException(400, "Email already exists")
+
+    # 2️⃣ Generate username automatically
+    user_name = generate_unique_username()
+
+    # 3️⃣ Generate values
+    user_id = str(uuid.uuid4())
+    hashed_password = ph.hash(user.password)
+    refer_id = generate_referral_id()
+    otp = generate_otp()
+    otp_expiry = datetime.utcnow() + timedelta(minutes=10)
+
+    # 4️⃣ Insert user
+    user_data = {
+        "user_id": user_id,
+        "user_email": user.user_email,
+        "user_name": user_name,
+        "password": hashed_password,
+        "refer_id": refer_id,
+        "otp": str(otp),
+        "otp_expiry": otp_expiry.isoformat(),
+        "verified": False,
+        "created_at": datetime.utcnow().isoformat(),
+        "modified_at": datetime.utcnow().isoformat(),
+        "created_by": user_id,
+        "modified_by": user_id
+    }
+
+    response = supabase.table("users").insert(user_data).execute()
+    if not response.data:
+        raise HTTPException(500, "User creation failed")
+
+    # 5️⃣ Send OTP
+    try:
+        await send_otp_email(user_name,user.user_email,otp)
+    except Exception:
+        raise HTTPException(502, "Failed to send OTP")
+
+    return {
+        "message": "Signup successful. Verify OTP to continue.",
+        "username": user_name,
+        "otp_expiry": otp_expiry.isoformat()
+    }

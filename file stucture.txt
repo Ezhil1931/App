@@ -1,0 +1,104 @@
+your_project/
+│
+├── config/          # App-level configurations (env, DB, settings)
+│   └── database.py          ← ✅ DB connection (SQLAlchemy/Tortoise/etc.)
+│   └── settings.py          ← App settings (from env vars)
+│
+├── constants/       # Constants, enums, global/static values
+│   └── roles.py              ← e.g., USER, ADMIN roles
+│   └── messages.py           ← reusable messages
+│
+├── controllers/     # Route handlers (FastAPI endpoints)
+│   └── auth_controller.py    ← Handles login, register
+│   └── user_controller.py    ← Handles user CRUD routes
+│
+├── dtos/            # Pydantic models (request/response schemas)
+│   └── auth_dto.py           ← LoginRequest, RegisterRequest
+│   └── user_dto.py           ← UserResponse, UserUpdate
+│
+├── errors/          # Custom error classes and handlers
+│   └── http_exceptions.py    ← Custom HTTPException wrappers
+│   └── error_codes.py        ← Error enums or messages
+│
+├── logs/            # Logging configuration
+│   └── logger.py             ← Logging formatter/setup
+│
+├── middleware/      # Custom middleware (auth, logging, etc.)
+│   └── auth_middleware.py    ← JWT/Auth check middleware
+│
+├── models/          # ORM models (SQLAlchemy, Tortoise, etc.)
+│   └── user_model.py         ← SQLAlchemy User model
+│   └── token_model.py        ← Token (if needed)
+│
+├── repositories/    # DB operations: clean separation from business logic
+│   └── user_repo.py          ← User DB access methods
+│   └── auth_repo.py          ← Auth-related DB access
+│
+├── services/        # Business logic (independent of routes)
+│   └── auth_service.py       ← Handles login, register logic
+│   └── user_service.py       ← Handles user profile logic
+│
+├── utils/           # Utility functions/helpers
+│   └── jwt_utils.py           ← JWT encoding/decoding
+│   └── password_utils.py      ← Password hashing
+│
+├── validators/      # Custom Pydantic validators or field validators
+│   └── email_validator.py    ← Validates email fields
+│
+├── main.py          # Entry point to start the FastAPI app
+└── requirements.txt # Python dependencies
+3es,/
+
+  {
+    "email_id": "michael.jones@example.com",
+    "password": "SecurePass456$"
+  },
+  {
+    "email_id": "sofia.ramirez@example.com",
+    "password": "MyPass789#"
+  }
+
+Admin -> report update and delete
+
+
+------------------this is for indexin full text search and pg_trgm and thet index query--------------
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS search_vector tsvector
+GENERATED ALWAYS AS (
+  to_tsvector(
+    'english',
+    coalesce(user_name, '') || ' ' ||
+    coalesce(full_name, '') || ' ' ||
+    coalesce(bio, '')
+  )
+) STORED;
+#-------------------------------index
+CREATE INDEX IF NOT EXISTS users_search_vector_idx
+ON users
+USING GIN (search_vector);
+
+
+CREATE INDEX IF NOT EXISTS users_trgm_idx
+ON users
+USING GIN (
+  (user_name || ' ' || full_name || ' ' || bio) gin_trgm_ops
+);
+----post---------
+ALTER TABLE posts
+ADD COLUMN IF NOT EXISTS search_vector tsvector
+GENERATED ALWAYS AS (
+  to_tsvector(
+    'english',
+    coalesce(post_title, '') || ' ' ||
+    coalesce(post_content, '')
+  )
+) STORED;
+CREATE INDEX IF NOT EXISTS posts_search_vector_idx
+ON posts
+USING GIN (search_vector);
+
+CREATE INDEX IF NOT EXISTS posts_trgm_idx
+ON posts
+USING GIN (
+  (post_title || ' ' || post_content) gin_trgm_ops
+);
