@@ -1,13 +1,25 @@
 
 from supabase import create_client, Client
 
-api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3Y21hdXFuZmt6c25icmxid3pmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MzQ3OTcsImV4cCI6MjA3NTMxMDc5N30.7ctmxqL9xQ6pTKSUOu2NFSUHZ4JD9VnVyzPdFH3f0c0"
+import os
+from dotenv import load_dotenv
 
-api_key_bypass="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3Y21hdXFuZmt6c25icmxid3pmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTczNDc5NywiZXhwIjoyMDc1MzEwNzk3fQ.cxHeQ8sWsXBO9UnlhKto6kSfViBgHwqNJoXMe8dGqYc"
+# Load .env file (for local development)
+load_dotenv()
+
+# API Keys
+API_KEY = os.getenv("api_key_bypass")
 
 
-SUPABASE_URL="https://rwcmauqnfkzsnbrlbwzf.supabase.co"
+# Supabase
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+# Optional: sanity check
+required_vars = ["API_KEY","SUPABASE_URL"]
+for var in required_vars:
+    if not os.getenv(var):
+        raise ValueError(f"Environment variable {var} is not set!")
 
-     
 
-supabase:Client = create_client(SUPABASE_URL,api_key_bypass)
+
+
+supabase:Client = create_client(SUPABASE_URL,API_KEY)

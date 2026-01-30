@@ -18,7 +18,7 @@ class RequestEmailChange(BaseModel):
     current_password: str
 
 
-@router.post("/auth/change-email/request")
+@router.post("/change-email/request")
 async def request_email_change(
     payload: RequestEmailChange,
     user=Depends(auth_guard)
@@ -72,9 +72,9 @@ async def request_email_change(
     # 6️⃣ Send OTP to NEW email
     try:
         await send_otp_email(
-          
-            email=payload.new_email,
-            otp=otp
+           "user",
+            payload.new_email,
+           otp
         )
     except Exception:
         # rollback OTP
@@ -98,7 +98,7 @@ class VerifyEmailChange(BaseModel):
     otp: str
 
 
-@router.post("/auth/change-email/verify")
+@router.post("/change-email/verify")
 async def verify_email_change(
     payload: VerifyEmailChange,
     user=Depends(auth_guard)

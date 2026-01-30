@@ -18,7 +18,7 @@ class ForgotPasswordRequest(BaseModel):
     identifier: str  
 
 
-@router.post("/auth/forgot-password/request")
+@router.post("/password/request")
 async def forgot_password_request(payload: ForgotPasswordRequest):
 
     identifier = payload.identifier.strip()
@@ -60,7 +60,7 @@ async def forgot_password_request(payload: ForgotPasswordRequest):
 
     try:
         await send_otp_email(
-            
+            "user",
             user["user_email"],
             otp
         )
@@ -81,7 +81,7 @@ class ForgotPasswordVerify(BaseModel):
     new_password: str
 
 
-@router.post("/auth/forgot-password/verify")
+@router.post("/password/verify")
 async def forgot_password_verify(payload: ForgotPasswordVerify):
 
     identifier = payload.identifier.strip()

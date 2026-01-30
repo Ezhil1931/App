@@ -13,6 +13,7 @@ Lib/
 Scripts/
 pyvenv.cfg
 share/
+old codes/
 
 fake account.txt
 file structure.txt

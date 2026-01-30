@@ -1,15 +1,15 @@
-from pathlib import Path
+import os
+from dotenv import load_dotenv
 
-# Get ROOT directory of the project
-ROOT_DIR = Path(__file__).resolve().parents[2]
+# Load .env file (for local development)
+load_dotenv()
 
-PRIVATE_KEY_PATH = ROOT_DIR / "private.pem"
-PUBLIC_KEY_PATH = ROOT_DIR / "public.pem"
-
-with open(PRIVATE_KEY_PATH, "r") as f:
-    PRIVATE_KEY = f.read()
-
-with open(PUBLIC_KEY_PATH, "r") as f:
-    PUBLIC_KEY = f.read()
+# Get keys from environment variables
+PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+PUBLIC_KEY = os.getenv("PUBLIC_KEY")
 
 ALGORITHM = "RS256"
+
+# Optional: check if keys loaded correctly
+if not PRIVATE_KEY or not PUBLIC_KEY:
+    raise ValueError("JWT keys are not set in environment variables!")

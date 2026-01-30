@@ -19,7 +19,7 @@ class RequestPasswordChange(BaseModel):
     new_password: str
 
 
-@router.post("/auth/change-password/request")
+@router.post("/change-password/request")
 async def request_password_change(
     payload: RequestPasswordChange,
     user=Depends(auth_guard)
@@ -64,7 +64,7 @@ async def request_password_change(
     # 6️⃣ Send OTP to registered email
     try:
         await send_otp_email(
-         
+         "user",
             user_row["user_email"],
             otp
         )
@@ -91,7 +91,7 @@ class VerifyPasswordOTP(BaseModel):
     new_password: str
 
 
-@router.post("/auth/change-password/verify")
+@router.post("/change-password/verify")
 async def verify_password_change(
     payload: VerifyPasswordOTP,
     user=Depends(auth_guard)
