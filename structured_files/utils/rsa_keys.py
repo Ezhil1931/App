@@ -11,5 +11,3 @@ PUBLIC_KEY = os.getenv("PUBLIC_KEY")
 ALGORITHM = "RS256"
 
 # Optional: check if keys loaded correctly
-if not PRIVATE_KEY or not PUBLIC_KEY:
-    raise ValueError("JWT keys are not set in environment variables!")
