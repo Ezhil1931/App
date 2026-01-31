@@ -31,13 +31,13 @@ app.include_router(change_password.router, prefix="/auth", tags=["Change Passwor
 # =========================
 # OTP
 # =========================
-app.include_router(otp_request.router, prefix="/request", tags=["OTP Request"])
-app.include_router(otp_verify.router, prefix="/verify", tags=["OTP Verify"])
+app.include_router(otp_request.router, prefix="/auth", tags=["OTP Request"])
+app.include_router(otp_verify.router, prefix="/auth", tags=["OTP Verify"])
 
 # =========================
 # Password Recovery
 # =========================
-app.include_router(forgot_pass.router, prefix="/forgot", tags=["Forgot Password"])
+app.include_router(forgot_pass.router, prefix="/auth", tags=["Forgot Password"])
 
 # =========================
 # User
@@ -83,6 +83,7 @@ app.add_middleware(
     allow_methods=["*"],
      allow_headers=[
         "auth_token",
+        "refresh_token",
         "Authorization",
         "Content-Type",
     ]

@@ -56,7 +56,6 @@ async def verify_otp(payload: OTPVerifyPayload):
     }).eq("user_id", user["user_id"]).execute()
 
     return {
-        "status": "success",
-        "message": "OTP verified successfully",
-      
-    }
+    "status": 200,
+    "message": "OTP verified successfully"
+}

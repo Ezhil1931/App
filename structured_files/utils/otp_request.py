@@ -59,7 +59,7 @@ async def resend_otp(payload: OTPResendPayload):
         )
 
     return {
-        "status": "success",
-        "message": "OTP resent successfully",
-        "otp_expiry": otp_expiry.isoformat()
+        "status": 200,
+        "message": "OTP resent successfully"
+        
     }

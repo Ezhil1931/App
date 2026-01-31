@@ -20,7 +20,7 @@ def is_refresh_near_expiry(refresh_payload, days=3) -> bool:
 
 
 @router.post("/refresh-token")
-async def refresh_tokens(refresh_token: str = Header(None)):
+async def refresh_tokens(refresh_token: str =  Header(..., convert_underscores=False)):
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
 

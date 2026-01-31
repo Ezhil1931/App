@@ -18,7 +18,7 @@ class ForgotPasswordRequest(BaseModel):
     identifier: str  
 
 
-@router.post("/password/request")
+@router.post("/forgot-password/request")
 async def forgot_password_request(payload: ForgotPasswordRequest):
 
     identifier = payload.identifier.strip()
@@ -81,7 +81,7 @@ class ForgotPasswordVerify(BaseModel):
     new_password: str
 
 
-@router.post("/password/verify")
+@router.post("/forgot-password/verify")
 async def forgot_password_verify(payload: ForgotPasswordVerify):
 
     identifier = payload.identifier.strip()
