@@ -38,6 +38,8 @@ async def refresh_tokens(refresh_token: str =  Header(..., convert_underscores=F
         new_refresh = refresh_token
 
     return {
-        "new_token": new_auth,
-        "new_token": new_refresh
+        "status":200,
+        "message":"Token generated successfully",
+        "auth_token": new_auth,
+        "refresh_token": new_refresh
     }
