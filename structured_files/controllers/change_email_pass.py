@@ -105,6 +105,19 @@ async def verify_email_change(
 ):
     user_id = user["user_id"]
 
+    email_check = (
+        supabase.table("users")
+        .select("user_id")
+        .eq("user_email", payload.new_email)
+        .limit(1)
+        .execute()
+    )
+
+    if email_check.data:
+        raise HTTPException(status_code=409, detail="Email already in use")
+
+    
+
     # 1️⃣ Fetch OTP
     res = (
         supabase.table("users")
@@ -113,6 +126,8 @@ async def verify_email_change(
         .limit(1)
         .execute()
     )
+
+
 
     if not res.data or not res.data[0].get("otp"):
         raise HTTPException(status_code=400, detail="OTP not found")

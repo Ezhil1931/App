@@ -89,7 +89,7 @@ async def request_password_change(
 class VerifyPasswordOTP(BaseModel):
     otp: str
     new_password: str
-
+from datetime import datetime, timezone
 
 @router.post("/change-password/verify")
 async def verify_password_change(
@@ -113,9 +113,17 @@ async def verify_password_change(
     row = res.data[0]
 
     # 2️⃣ Expiry check
-    otp_expiry = datetime.fromisoformat(
-        row["otp_expiry"].replace("Z", "+00:00")
-    )
+    otp_expiry_str = row["otp_expiry"]
+
+    # Supabase ISO string example: '2026-01-31T02:20:54.981460+00:00'
+    # Normalize to 6-digit microseconds if needed
+    if "." in otp_expiry_str:
+        date_part, rest = otp_expiry_str.split(".")
+        micro = rest[:6].ljust(6, "0")
+        tz = rest[6:]
+        otp_expiry_str = f"{date_part}.{micro}{tz}"
+
+    otp_expiry = datetime.fromisoformat(otp_expiry_str)
 
     if datetime.now(timezone.utc) > otp_expiry:
         raise HTTPException(status_code=400, detail="OTP expired")

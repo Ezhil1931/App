@@ -95,7 +95,7 @@ async def sign_up(user: SignUpRequest):
         raise HTTPException(502, "Failed to send OTP")
 
     return {
-        "message": "Signup successful. Verify OTP to continue.",
-        "username": user_name,
-        "otp_expiry": otp_expiry.isoformat()
+        "status": 200,
+        "message": "Signup successful. Verify OTP",
+       
     }
