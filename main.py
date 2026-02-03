@@ -4,20 +4,29 @@ from pydantic import BaseModel
 
 
 
-from structured_files.controllers import login_router,sign_up,user_update,get_user,post_img,post_report,like_router,comment_router,follow_router,vector_search,cat_post_router,change_email_pass,change_password,forgot_pass,trending_post,refresh_token,cat_random
+from structured_files.controllers import login_router,sign_up,user_update,get_user,post_img,post_report,like_router,comment_router,follow_router,vector_search,cat_post_router,change_email_pass,change_password,forgot_pass,feed_post,refresh_token,cat_random
 
 
 
 from structured_files.utils import check_user_name,otp_request
 from structured_files.middleware import otp_verify
 from structured_files.middleware.trigger_js import trigger_express_api
- 
+
+from structured_files.config.supabase_config import supabase
 
 app=FastAPI()
 
 @app.get("/")
 def serverRunning():
-    return {"message": "V Predict Backend is running"}
+    resposne=supabase.table("server_test").select("*").execute()
+
+  
+    return {
+        "message": "App Backend is running",
+        "server_test_data": resposne.data
+    }
+
+
 
 # =========================
 # Authentication
@@ -49,6 +58,7 @@ app.include_router(check_user_name.router, prefix="/check", tags=["Check Usernam
 # =========================
 # Social
 # =========================
+
 app.include_router(follow_router.router, prefix="/follow", tags=["Follow"])
 app.include_router(like_router.router, prefix="/like", tags=["Like"])
 app.include_router(comment_router.router, prefix="/comment", tags=["Comment"])
@@ -62,8 +72,8 @@ app.include_router(post_report.router, prefix="/post", tags=["Report Post"])
 # =========================
 # Categories
 # =========================
-app.include_router(cat_post_router.router, prefix="/get", tags=["Category Posts"])
-app.include_router(cat_random.router, prefix="/random", tags=["Random Category Posts"])
+app.include_router(cat_post_router.router, prefix="/get", tags=["Category Posts-ezhil007"])
+app.include_router(cat_random.router, prefix="/get", tags=["Random Category Posts-dhana"])
 
 # =========================
 # Search
@@ -73,7 +83,7 @@ app.include_router(vector_search.router, prefix="/search", tags=["Search"])
 # =========================
 # Trending
 # =========================
-app.include_router(trending_post.router, prefix="/trending_post", tags=["Trending Posts"])
+app.include_router(feed_post.router, prefix="/trending_post", tags=["User folllowing Posts / Trending post"])
 
 
 app.add_middleware(
