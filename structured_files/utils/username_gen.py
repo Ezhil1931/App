@@ -1,29 +1,30 @@
-import uuid
+
+import uuid, random
+
 from ..config.supabase_config import supabase
 
-
-def generate_unique_username() -> str:
-    """
+"""
     Generates a unique username like: user_482193
     Ensures no conflict in DB.
     """
 
+
+
+
+def generate_unique_username():
     MAX_ATTEMPTS = 10
 
     for _ in range(MAX_ATTEMPTS):
-        username = f"user_{uuid.uuid4().hex[:6]}"
-
+        username = f"user_{random.randint(100000, 999999)}"
         exists = (
-            supabase
-            .table("users")
+            supabase.table("users")
             .select("user_id")
-            .eq("user_name", username)
+            .ilike("user_name", username)
             .execute()
             .data
         )
-
         if not exists:
             return username
 
-    # Fallback (almost impossible to reach)
-    return f"user_{uuid.uuid4().hex}"
+    # fallback – guaranteed unique
+    return f"user_{uuid.uuid4().hex[:8]}"

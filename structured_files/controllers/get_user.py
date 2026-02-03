@@ -40,10 +40,11 @@ class UserProfileResponse(BaseModel):
 @router.get("/user/{user_id}", response_model=UserProfileResponse)
 async def get_user_data(
     user_id: str,
-    limit: int = Query(20, ge=1, le=50),
+    limit: int = Query(20, ge=1),
     skip: int = Query(0, ge=0),
-    current_user=Depends(auth_guard)
-):
+    user=Depends(auth_guard)
+): 
+    current_user_id = user["user_id"]
     
     # -------------------------
     # 1) Get user profile
@@ -120,5 +121,6 @@ async def get_user_data(
         user=user_data,
         followers=followers_count,
         following=following_count,
-        posts=posts_list
+        posts=posts_list,
+        current_user_id=current_user_id
     )

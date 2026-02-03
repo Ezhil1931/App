@@ -301,16 +301,14 @@ async def category_feed(
 
 
 # category trending  top ten post
+from fastapi import Query
 
-class FeedRequest(BaseModel):
-    category_id: str
-    limit: int = 10
-
-@router.post("/trending/category")
-async def trending_by_category(payload: FeedRequest, user=Depends(auth_guard)):
-
-    category_title = payload.category_title
-    limit = payload.limit
+@router.get("/trending-ten/category")
+async def trending_by_category(
+    category_title: str = Query(...),
+    limit: int = Query(10),
+    user=Depends(auth_guard)
+):
 
     # 1️⃣ Get category ID from title
     category_res = (
@@ -341,7 +339,7 @@ async def trending_by_category(payload: FeedRequest, user=Depends(auth_guard)):
     if not post_ids:
         return {"feed": []}
 
-    # 3️⃣ Fetch full post data (same as before)
+    # 3️⃣ Fetch full post data
     posts = (
         supabase.table("posts")
         .select("post_id, user_id, post_title, post_content, category, created_at")

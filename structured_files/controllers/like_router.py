@@ -82,33 +82,6 @@ def unlike_post(payload: LikeRequest, user=Depends(auth_guard)):
 
 
 
-#Check if the user like the post or not
-
-@router.post("/is_liked", status_code=status.HTTP_200_OK)
-def is_post_liked(payload: PostLikePayload, user=Depends(auth_guard)):
-    try:
-        user_id = user["user_id"]
-        
-
-        res = (
-            supabase.table("likes")
-            .select("like_id")
-            .eq("user_id", user_id)
-            .eq("post_id", payload.post_id)
-            .execute()
-        )
-
-        return {
-            "status": "success",
-            "status_code": status.HTTP_200_OK,
-            "post_id": payload.post_id,
-            "liked": True if res.data else False
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"IS_LIKED_ERROR: {str(e)}")
-
-
 
 
 #get the user who liked the post

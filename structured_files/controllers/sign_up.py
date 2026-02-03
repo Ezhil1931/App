@@ -7,6 +7,8 @@ import uuid, random
 from ..config.supabase_config import supabase
 from ..utils.email_sender import send_otp_email
 from ..utils.refer_id_gen import generate_referral_id
+from ..utils.otp_gen import generate_otp
+from ..utils.username_gen import  generate_unique_username
 
 router = APIRouter()
 ph = PasswordHasher()
@@ -27,26 +29,7 @@ class SignUpRequest(BaseModel):
 
 
 
-def generate_otp():
-    return random.randint(100000, 999999)
 
-def generate_unique_username():
-    MAX_ATTEMPTS = 10
-
-    for _ in range(MAX_ATTEMPTS):
-        username = f"user_{random.randint(100000, 999999)}"
-        exists = (
-            supabase.table("users")
-            .select("user_id")
-            .ilike("user_name", username)
-            .execute()
-            .data
-        )
-        if not exists:
-            return username
-
-    # fallback – guaranteed unique
-    return f"user_{uuid.uuid4().hex[:8]}"
 
 
 
@@ -97,5 +80,6 @@ async def sign_up(user: SignUpRequest):
     return {
         "status": 200,
         "message": "Signup successful. Verify OTP",
+        "data":True
        
     }

@@ -7,7 +7,7 @@ from ..middleware.jwt_auth import auth_guard
 
 
     
-class SearchPayload(BaseModel):
+class UserSearchPayload(BaseModel):
     query: str
     limit: int = 20
     last_rank: Optional[float] = None
@@ -20,7 +20,7 @@ router = APIRouter()
 
 @router.post("/search/users")
 async def search_users(
-    payload: SearchPayload,
+    payload: UserSearchPayload,
     user=Depends(auth_guard)     # <-- JWT authentication
 ):
     try:

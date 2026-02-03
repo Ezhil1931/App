@@ -5,6 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from ..middleware.jwt_auth import auth_guard
 from ..config.supabase_config import supabase
 
+#this is for dahan ssaid exclude some post and send remaining post for category feed
+
 
 class CategoryRandomFeedRequest(BaseModel):
     category_title: str
@@ -15,7 +17,7 @@ class CategoryRandomFeedRequest(BaseModel):
 router = APIRouter()
 
 
-@router.post("/feed/category/random")
+@router.post("/category/random-feed")
 async def get_random_posts_by_category(
     payload: CategoryRandomFeedRequest,
     user=Depends(auth_guard)
